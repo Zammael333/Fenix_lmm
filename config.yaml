@@ -1,0 +1,73 @@
+# ==============================================================================
+# PROYECTO FÉNIX LLM - CONFIGURACIÓN CENTRALIZADA (config.yaml)
+# Estándar de Disponibilidad: SEIS SIGMAS (SLO 99.99973% - < 3.4 DPMO)
+# Perímetro Físico Innegociable: 16 GB RAM / 512 GB SSD
+# ==============================================================================
+
+system:
+  cluster_name: "fenix-cluster-soberano"
+  cluster_size: 33
+  main_memory_limit_mb: 16384     # 16 GB RAM
+  storage_limit_gb: 512           # 512 GB SSD
+  error_budget_threshold: 0.000027 # Seis Sigmas (3.4 defectos por millón de operaciones)
+  thermal_limit_celsius: 78.0     # Umbral de estrangulamiento térmico preventivo
+  volatile_shm_dir: "/dev/shm/fenix_volatile"
+  persistent_storage_dir: "data"
+
+network:
+  host: "127.0.0.1"
+  port_maestro: 9000
+  port_gateway: 9001
+  ssl_ca_cert: "certs/ca.crt"
+  ssl_server_cert: "certs/server.crt"
+  ssl_server_key: "certs/server.key"
+  ssl_client_cert: "certs/client.crt"
+  ssl_client_key: "certs/client.key"
+  timeout_seconds: 5.0
+  keepalive_interval_seconds: 15.0
+
+security:
+  kill_switch_host: "127.0.0.1"
+  kill_switch_port: 9999
+  kill_token: "RED_ALERT_KILL_33"
+  dead_man_heartbeat_file: "/dev/shm/fenix_volatile/heartbeat.token"
+  dead_man_timeout_seconds: 10.0
+  prompt_fence_secret: "fenix_ed25519_sovereign_boundary_key_v1"
+  keystroke_jitter_tolerance_ms: 25.0
+  vocal_stress_threshold: 0.85
+  honeypot_routing_active: true
+
+routing:
+  bypass_commands:
+    - command: "/status"
+      description: "Estado de salud del kernel, CPU, memoria y almacenamiento nativo"
+      handler: "status_handler"
+    - command: "/net"
+      description: "Telemetría de interfaces de red activas e IPs"
+      handler: "net_handler"
+    - command: "/mem"
+      description: "Desglose de uso de memoria física y swap"
+      handler: "mem_handler"
+    - command: "/version"
+      description: "Versión de arquitectura e invariantes de Fénix"
+      handler: "version_handler"
+
+paging:
+  block_size_bytes: 4194304       # Bloques de 4MB (PagedMemory)
+  max_ram_cache_blocks: 128       # 512 MB de cache de mochilas activas
+  mmap_dir: "data/mmap_store"
+  eviction_policy: "kalman_predictive" # Predicción basada en ganancia de Kalman
+
+kalman:
+  state_dimension: 4             # 4 sargentos base iniciales (escalable a 33)
+  process_noise_q: 0.0001        # Ruido de proceso
+  sensor_noise_r: 0.01           # Ruido de medición
+  spectral_radius_limit: 0.95    # Estabilidad asintótica estricta
+  learning_rate: 0.01
+
+carronero:
+  temperature: 2.0
+  alpha_distillation: 0.5
+  beta_dpo: 0.1
+  gamma_tail: 0.05
+  eps_margin: 0.0000001          # 1e-7 para estabilidad numérica Float32
