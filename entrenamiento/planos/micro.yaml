@@ -1,0 +1,24 @@
+# Plano Micro: ~1.500.000 parámetros
+# Diseñado para microagentes sargentos (SRE, OSINT, Forense, Marketing) con <100MB de huella.
+model:
+  vocab_size: 1024
+  d_model: 128
+  n_heads: 4
+  n_layers: 4
+  d_ff: 344
+  max_seq_len: 256
+  rope_theta: 10000.0
+  eps: 0.000001
+  tie_weights: true
+
+training:
+  batch_size: 8
+  seq_len: 128
+  learning_rate: 0.0005
+  min_learning_rate: 0.00005
+  warmup_steps: 50
+  max_steps: 500
+  weight_decay: 0.01
+  max_grad_norm: 1.0
+  eval_interval: 50
+  checkpoint_dir: "data/checkpoints/micro"

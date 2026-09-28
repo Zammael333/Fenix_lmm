@@ -1,0 +1,21 @@
+Fénix LLM es una arquitectura soberana y desacoplada de inteligencia artificial para computación local de alto rendimiento.
+El clúster está compuesto por 33 nodos heterogéneos y un enjambre de microagentes optimizados para operar dentro de un perímetro físico estricto de 16 GB de RAM y 512 GB de almacenamiento SSD.
+La disponibilidad del sistema cumple con el estándar de Seis Sigmas, lo que garantiza menos de 3.4 defectos por millón de operaciones (SLO del 99.99973%).
+
+El enrutamiento de Capa Cero intercepta cada instrucción ingresada y la evalúa contra una tabla determinista en memoria en tiempo de ejecución O(1).
+Comandos como /status, /net, /mem y /version se ejecutan de forma instantánea mediante introspección nativa del sistema operativo en /proc y statvfs, ahorrando el 100% de los tokens de inferencia.
+Si la instrucción no coincide con un comando de infraestructura, se deriva al enjambre de microagentes inteligentes para su procesamiento generativo.
+
+El Paginador de Memoria Latente utiliza un Filtro de Kalman con formulación estabilizada de Joseph para predecir la demanda de los agentes en los próximos milisegundos.
+Los pesos de los microagentes se almacenan en el SSD y se mapean en la RAM volátil mediante mmap (mapeo de memoria).
+Cuando la memoria física alcanza el umbral de confinamiento termodinámico, el sistema evicta limpiamente los pesos del agente con menor probabilidad de uso, liberando punteros y descriptores de archivo sin generar excepciones BufferError.
+
+El Modo Carroñero es un protocolo de destilación donde un modelo estudiante asimila las probabilidades de modelos base maestros locales.
+Combina la optimización directa de preferencias (DPO) con la divergencia Kullback-Leibler inversa de diversidad (DRKL).
+El cálculo numérico utiliza el truco log-sum-exp y márgenes epsilon para prevenir desbordes de coma flotante y valores NaN ante sobreconfianza extrema.
+El gradiente analítico del estudiante respecto a sus logits es igual a T multiplicado por la diferencia entre las probabilidades del estudiante y las del profesor.
+
+La seguridad perimetral se basa en autenticación mutua mTLS con certificados X.509 locales que incluyen Subject Alternative Names para localhost y 127.0.0.1.
+Las instrucciones críticas están protegidas mediante Prompt Fencing criptográfico firmado con HMAC-SHA256 para evitar inyecciones de prompts.
+El sistema cuenta con un demonio de Kill Switch Out-of-Band en el puerto 9999 que permite cortes de emergencia de Nivel 1 (STOP_SANDBOX), Nivel 2 (KILL_ENJAMBRE) y Nivel 3 (HARD_SHUTDOWN).
+El Dead Man's Switch purga la memoria volátil en /dev/shm si el token de latido expira.
